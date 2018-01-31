@@ -8,10 +8,55 @@
 
 using std::string;
 using std::vector;
+using std::sort;
 
 //----------------------------------USE THE GIVEN DATASTRUCTURES, even if they are inneficient
 Dictionary::Dictionary() {
 }
+void pre_process() {
+	std:ifstream input("words");
+	std:ofstream output("words.txt", std::ios_base::app | std::ios_base::out);
+
+	string line;
+	string tempstr;
+	while(std::getline(input, line)) {
+		tempstr = line;
+		process_word(tempstr);
+		output << tempstr << "\n";
+	}
+}
+
+void process_word(string& word) {
+	//make the word lower case
+	transform(word.begin(), word.end(), word.begin(), ::tolower);
+
+	//create trigrams of the word
+	vector<string> trigrams;
+	int size = word.size();
+	int tempstr;
+	for(int i = 0; i < size; ++i) {
+		tempstr = word.substr(i, 3);
+		if(tempstr.length() < 3) {
+			break;
+		}
+		trigrams.push_back(tempstr);
+	}
+
+	// sort the trigrams in alphabetic order
+	sort(trigrams.begin(), trigrams.end(), alphabetic_compare);
+
+	// make the word output format: "word 2 ord wor"
+	word.append(" ");
+	word.append(trigrams.size());
+	for(string& s : trigrams) {
+		word.append(s);
+		word.append(" ");
+	}
+	word.pop_back();
+
+}
+
+bool alphabetic_compare(string a, string b) {return a<b;}
 
 bool Dictionary::contains(const string& word) const {
 //this function must be fast
