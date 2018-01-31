@@ -10,6 +10,9 @@ public:
 	bool contains(const std::string& word) const;
 	std::vector<std::string> get_suggestions(const std::string& word) const;
 private:
+	void add_trigram_suggestions(std:string& suggestions, const std::string& word);
+	void rank_suggestions(std:string& suggestions, const std::string& word);
+	void trim_suggestions(std:string& suggestions);
 };
 
 #endif
