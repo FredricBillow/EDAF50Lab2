@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <unordered_set>
+
 
 class Dictionary {
 public:
@@ -16,6 +18,8 @@ private:
 	void trim_suggestions(std::string& suggestions);
 	void process_word(std::string& word);
 	static bool alphabetic_compare(std::string a, std::string b);
+	void load_words();
+	std::unordered_set<std::string> wordset;
 };
 
 #endif
