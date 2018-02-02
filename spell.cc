@@ -30,9 +30,10 @@ void check_word(const string& word, const Dictionary& dict)
 int main() {
 	Dictionary dict;
 	string word;
-	while (cin >> word) {
-		transform(word.begin(), word.end(), word.begin(), ::tolower);
-        check_word(word, dict);
-	}
+  dict.pre_process();
+	//while (cin >> word) {
+		//transform(word.begin(), word.end(), word.begin(), ::tolower);
+    //    check_word(word, dict);
+	//}
     return 0;
 }
