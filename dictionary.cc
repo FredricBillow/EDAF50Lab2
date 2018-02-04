@@ -12,7 +12,7 @@ using std::sort;
 #include <unordered_set>
 
 //----------------------------------USE THE GIVEN DATASTRUCTURES, even if they are inneficient
-Dictionary::Dictionary()  {
+Dictionary::Dictionary(int length)  {
 	wordset = {};
 	pre_process();
 	load_words();
@@ -26,10 +26,39 @@ void Dictionary::load_words() {
 	while(std::getline(input, line)) {
 		tempstr = line;
 		string delimiter = " ";
+		Word w = create_word(tempstr); //gets the whole line "word 2 ord wor"
+		int word_size = w.get_word.length();
+		words[word_size].push_back(w);
+
 	 	tempstr = tempstr.substr(0, tempstr.find(delimiter));
 		wordset.insert(tempstr);
+
 		std::cout << "added word: " << tempstr << std::endl;
+
+
 	}
+}
+
+Word Dictionary::create_word(string line const) {
+	size_t pos = 0;
+	std::string token = " ";
+	string tempstr = line;
+	string word = tempstr.substr(0, pos = tempstr.find(delimiter));
+	tempstr.erase(0, pos + delimiter.length());
+	string nbr_trigrams = tempstr.substr(0, pos = tempstr.find(delimiter));
+	tempstr.erase(0, pos + delimiter.length());
+	int iterations = std::stoi(nbr_trigrams);
+
+	vector<string> vec_trigrams = {};
+
+	for(int i = 0; i < iterations; ++i) {
+		string tri = tempstr.substr(0, pos = tempstr.find(delimiter));
+		tempstr.erase(0, pos + delimiter.length());
+		vec_trigrams.push_back(tri);
+	}
+
+	Word w = new Word(word, vec_trigrams);
+	return w;
 }
 
 void Dictionary::pre_process() {
@@ -103,9 +132,24 @@ vector<string> Dictionary::get_suggestions(const string& word) const {
 	// 3. Sort the correction candidates so that the best is first. " The sort key
 	//    is the cost to change the misspelled word to one of the candidate words"
 	// 4. Keep the 5 best words
+
+	int word_length = word.length();
+
+	vector<Word> v1 = words[word_length -1];
+	vector<Word> v2 = words[word_length];
+	vector<Word> v3 = words[word_length +1];
+
+	vector<int> i1
+
+
 	vector<string> suggestions;
-	//add_trigram_suggestions(suggestions, word);
+	add_trigram_suggestions(suggestions, word);
 	//rank_suggestions(suggestions, word);
 	//trim_suggestions(suggestions);
 	return suggestions;
+}
+
+void add_trigram_suggestions(vector<string>& suggestions, const string& word) {
+//ta fram trigrams för word
+
 }
