@@ -20,7 +20,7 @@ private:
 	static bool alphabetic_compare(std::string a, std::string b);
 	void load_words();
 	std::unordered_set<std::string> wordset;
-	std::vector<Word> words[length];
+	std::vector<Word> words[length + 1];
 };
 
 #endif

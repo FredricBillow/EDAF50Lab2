@@ -94,7 +94,7 @@ void Dictionary::process_word(std::string& word) {
 		if(tempstr.length() < 3) {
 			break;
 		}
-		trigrams.push_back(tempstr);
+		trigrams.push_back(tempstr);process_word
 	}
 
 	// sort the trigrams in alphabetic order
@@ -133,23 +133,104 @@ vector<string> Dictionary::get_suggestions(const string& word) const {
 	//    is the cost to change the misspelled word to one of the candidate words"
 	// 4. Keep the 5 best words
 
-	int word_length = word.length();
-
-	vector<Word> v1 = words[word_length -1];
-	vector<Word> v2 = words[word_length];
-	vector<Word> v3 = words[word_length +1];
-
-	vector<int> i1
 
 
 	vector<string> suggestions;
 	add_trigram_suggestions(suggestions, word);
-	//rank_suggestions(suggestions, word);
+	rank_suggestions(suggestions, word);
 	//trim_suggestions(suggestions);
 	return suggestions;
 }
 
 void add_trigram_suggestions(vector<string>& suggestions, const string& word) {
-//ta fram trigrams för word
+	//ta fram trigrams för word
+	string temp_word = word;
+	process_word(temp_word);
+
+	size_t pos = 0;
+	std::string token = " ";
+	string tempstr = temp_word;
+	string trash = tempstr.substr(0, pos = tempstr.find(delimiter));
+	tempstr.erase(0, pos + delimiter.length());
+	string nbr_trigrams = tempstr.substr(0, pos = tempstr.find(delimiter));
+	tempstr.erase(0, pos + delimiter.length());
+	int iterations = std::stoi(nbr_trigrams);
+
+	vector<string> word_trigrams = {};
+
+	for(int i = 0; i < iterations; ++i) {
+		string tri = tempstr.substr(0, pos = tempstr.find(delimiter));
+		tempstr.erase(0, pos + delimiter.length());
+		word_trigrams.push_back(tri);
+	}
+
+	int word_length = word.length();
+	int i1 = word.length() - 1;
+	int i2 = word.length();
+	int i3 = word.length() + 1;
+
+	vector<Word> v1 = {};
+	vector<Word> v2 = {};
+	vector<Word> v3 = {}
+
+	if(!(i1 < 1)) {
+		v1 = words[word_length -1];
+	}
+	if(!(i2 > (words.length()-1))) {
+		v2 = words[word_length];
+	}
+	if(!(i3 > (words.length()-2))) {
+		v3 = words[word_length +1];
+	}
+
+
+	int matches = 0;
+	for(Word& w : v1) {
+		matches = w.get_matches(word_trigrams);
+		if(matches/2 => iterations) {
+			suggestions.push_back(w.get_word);
+		}
+	}
+	for(Word& w : v2) {
+		matches = w.get_matches(word_trigrams);
+		if(matches/2 => iterations) {
+			suggestions.push_back(w.get_word);
+		}
+	}
+	for(Word& w : v3) {
+		matches = w.get_matches(word_trigrams);
+		if(matches/2 => iterations) {
+			suggestions.push_back(w.get_word);
+		}
+	}
+}
+
+rank_suggestions(string suggestions, string word const) {
+	string p = word;
+	for(string& q : suggestions) {
+		int[26][26] d;
+		for(int i = 0; i < 26); ++i) {
+			d[i][0] = i; 
+			for(int j = 0; j < 26); ++j) {
+				d[0][j] = j;
+				int smallest;
+				if(p[i] = q[j]) {
+					smallest = d[i-1][j-1];
+				} else {
+					smallest = d[i-1][j-1] + 1;
+				}
+				if((d[i-1][j] + 1) < smallest) {
+					smallest = d[i-1][j] + 1;
+				}
+				if((d[i][j-1] + 1) < smallest) {
+					smallest = d[i][j-1] + 1;
+				}
+			}
+		}
+	int cost = d[i][j];
+
+		if(p[] )
+	}
+
 
 }
