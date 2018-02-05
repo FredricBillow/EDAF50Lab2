@@ -12,9 +12,9 @@ using std::sort;
 #include <unordered_set>
 
 //----------------------------------USE THE GIVEN DATASTRUCTURES, even if they are inneficient
-Dictionary::Dictionary(int length)  {
+Dictionary::Dictionary(){//(int length)  {
 	wordset = {};
-	pre_process();
+	//pre_process();
 	load_words();
 }
 
@@ -27,7 +27,7 @@ void Dictionary::load_words() {
 		tempstr = line;
 		string delimiter = " ";
 		Word w = create_word(tempstr); //gets the whole line "word 2 ord wor"
-		int word_size = w.get_word.length();
+		int word_size = w.get_word().length();
 		words[word_size].push_back(w);
 
 	 	tempstr = tempstr.substr(0, tempstr.find(delimiter));
@@ -39,9 +39,9 @@ void Dictionary::load_words() {
 	}
 }
 
-Word Dictionary::create_word(string line const) {
+Word Dictionary::create_word(const string line) {
 	size_t pos = 0;
-	std::string token = " ";
+	std::string delimiter = " ";
 	string tempstr = line;
 	string word = tempstr.substr(0, pos = tempstr.find(delimiter));
 	tempstr.erase(0, pos + delimiter.length());
@@ -57,7 +57,7 @@ Word Dictionary::create_word(string line const) {
 		vec_trigrams.push_back(tri);
 	}
 
-	Word w = new Word(word, vec_trigrams);
+	Word w = Word(word, vec_trigrams);
 	return w;
 }
 
@@ -81,7 +81,7 @@ void Dictionary::pre_process() {
 }
 
 bool Dictionary::alphabetic_compare (string a, string b) {return a<b;}
-void Dictionary::process_word(std::string& word) {
+void Dictionary::process_word(std::string& word) const{
 	//make the word lower case
 	transform(word.begin(), word.end(), word.begin(), ::tolower);
 
@@ -94,7 +94,7 @@ void Dictionary::process_word(std::string& word) {
 		if(tempstr.length() < 3) {
 			break;
 		}
-		trigrams.push_back(tempstr);process_word
+		trigrams.push_back(tempstr);
 	}
 
 	// sort the trigrams in alphabetic order
@@ -136,25 +136,30 @@ vector<string> Dictionary::get_suggestions(const string& word) const {
 
 
 	vector<string> suggestions;
+
 	add_trigram_suggestions(suggestions, word);
 	rank_suggestions(suggestions, word);
 	//trim_suggestions(suggestions);
 	return suggestions;
 }
 
-void add_trigram_suggestions(vector<string>& suggestions, const string& word) {
+void Dictionary::add_trigram_suggestions(vector<string>& suggestions, const string& word) const {
 	//ta fram trigrams för word
+		std::cout << "In add_tri" << std::endl;
 	string temp_word = word;
 	process_word(temp_word);
 
+
 	size_t pos = 0;
-	std::string token = " ";
+	std::string delimiter = " ";
 	string tempstr = temp_word;
 	string trash = tempstr.substr(0, pos = tempstr.find(delimiter));
 	tempstr.erase(0, pos + delimiter.length());
 	string nbr_trigrams = tempstr.substr(0, pos = tempstr.find(delimiter));
 	tempstr.erase(0, pos + delimiter.length());
 	int iterations = std::stoi(nbr_trigrams);
+
+	std::cout << "In add_tri, after stoi" << std::endl;
 
 	vector<string> word_trigrams = {};
 
@@ -164,57 +169,83 @@ void add_trigram_suggestions(vector<string>& suggestions, const string& word) {
 		word_trigrams.push_back(tri);
 	}
 
+	std::cout << "after first for" << std::endl;
+
 	int word_length = word.length();
 	int i1 = word.length() - 1;
 	int i2 = word.length();
 	int i3 = word.length() + 1;
 
-	vector<Word> v1 = {};
-	vector<Word> v2 = {};
-	vector<Word> v3 = {}
 
+		int matches = 0;
+
+		for(int i = -1; i < 2; ++i) {
+			const vector<Word>& v = words[word_length + i];
+			std::cout << "getting vector: " << (i+word_length) << std::endl;
+			for(int j = 0; j < v.size(); ++j) {
+				//std::cout << "getting matches" << std::endl;
+
+				matches = v[j].get_matches(word_trigrams);
+				if(matches > 0) {
+					std::cout << "got matches: " << matches << "which is counted as: " << matches/2 << ", compare to " << iterations <<std::endl;
+
+				}
+
+				if(matches >= iterations/2) {
+					suggestions.push_back(v[j].get_word());
+					std::cout << "suggestion added" << std::endl;
+
+
+
+				}
+			}
+		}
+/*
 	if(!(i1 < 1)) {
-		v1 = words[word_length -1];
-	}
-	if(!(i2 > (words.length()-1))) {
-		v2 = words[word_length];
-	}
-	if(!(i3 > (words.length()-2))) {
-		v3 = words[word_length +1];
-	}
-
-
-	int matches = 0;
-	for(Word& w : v1) {
-		matches = w.get_matches(word_trigrams);
-		if(matches/2 => iterations) {
-			suggestions.push_back(w.get_word);
+		const vector<Word>& v1 = words[word_length -1];
+		for(const Word& w : v1) {
+			matches = w.get_matches(word_trigrams);
+			if(matches/2 >= iterations) {
+				suggestions.push_back(w.get_word());
+			}
 		}
 	}
-	for(Word& w : v2) {
-		matches = w.get_matches(word_trigrams);
-		if(matches/2 => iterations) {
-			suggestions.push_back(w.get_word);
+	if(!(i2 > (max_letters))) {
+		const vector<Word>& v2 = words[word_length];
+		for(const Word& w : v2) {
+			matches = w.get_matches(word_trigrams);
+			if(matches/2 >= iterations) {
+				suggestions.push_back(w.get_word());
+			}
 		}
 	}
-	for(Word& w : v3) {
-		matches = w.get_matches(word_trigrams);
-		if(matches/2 => iterations) {
-			suggestions.push_back(w.get_word);
+	if(!(i3 > (max_letters +1))) {
+		const vector<Word>& v3 = words[word_length +1];
+		for(const Word& w : v3) {
+			matches = w.get_matches(word_trigrams);
+			if(matches/2 >= iterations) {
+				suggestions.push_back(w.get_word());
+			}
 		}
 	}
+	*/
+	std::cout << "In add_tri done" << std::endl;
 }
 
-rank_suggestions(string suggestions, string word const) {
+
+void Dictionary::rank_suggestions(vector<string>& suggestions, const string& word) const {
 	string p = word;
+	vector<std::pair<int, string>> rank_vector = {};
+
 	for(string& q : suggestions) {
-		int[26][26] d;
-		for(int i = 0; i < 26); ++i) {
-			d[i][0] = i; 
-			for(int j = 0; j < 26); ++j) {
+		int d[26][26];
+		int cost;
+		for(int i = 0; i < 26; ++i) {
+			d[i][0] = i;
+			for(int j = 0; j < 26; ++j) {
 				d[0][j] = j;
 				int smallest;
-				if(p[i] = q[j]) {
+				if(p[i] == q[j]) {
 					smallest = d[i-1][j-1];
 				} else {
 					smallest = d[i-1][j-1] + 1;
@@ -225,12 +256,21 @@ rank_suggestions(string suggestions, string word const) {
 				if((d[i][j-1] + 1) < smallest) {
 					smallest = d[i][j-1] + 1;
 				}
+				cost = d[i][j];
 			}
 		}
-	int cost = d[i][j];
 
-		if(p[] )
+		std::cout << "rank vector, pushing word:" << q << std::endl;
+
+		rank_vector.push_back(std::make_pair(cost, q));
+	}
+	std::sort (rank_vector.begin(), rank_vector.end());
+	suggestions.clear();
+
+	for(int i = 0; i < rank_vector.size(); ++i) {
+		suggestions.push_back(rank_vector[i].second);
 	}
 
-
 }
+
+//bool ranksort (SugContainer i, SugContainer j) { return (i.rank<j.rank); }

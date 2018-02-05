@@ -28,7 +28,7 @@ void check_word(const string& word, const Dictionary& dict)
     }
 }
 int main() {
-	Dictionary dict = new Dictionary(25);
+	Dictionary dict;// = new Dictionary(25);
 	string word;
 
   while (cin >> word) {
