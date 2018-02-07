@@ -181,15 +181,14 @@ void Dictionary::add_trigram_suggestions(vector<string>& suggestions, const stri
 
 		for(int i = -1; i < 2; ++i) {
 			const vector<Word>& v = words[word_length + i];
-			std::cout << "getting vector: " << (i+word_length) << std::endl;
+			//std::cout << "getting vector: " << (i+word_length) << std::endl;
 			for(int j = 0; j < v.size(); ++j) {
 				//std::cout << "getting matches" << std::endl;
 
 				matches = v[j].get_matches(word_trigrams);
-				if(matches > 0) {
-					std::cout << "got matches: " << matches << "which is counted as: " << matches/2 << ", compare to " << iterations <<std::endl;
-
-				}
+		//		if(matches > 0) {
+		//			std::cout << "got matches: " << matches << "which is counted as: " << matches/2 << ", compare to " << iterations <<std::endl;
+		//		}
 
 				if(matches >= iterations/2) {
 					suggestions.push_back(v[j].get_word());
@@ -233,6 +232,13 @@ void Dictionary::add_trigram_suggestions(vector<string>& suggestions, const stri
 }
 
 
+bool compare_pair(const std::pair<int, string>&i, const std::pair<int, string>&j){
+	if(i.first != j.first) {
+		return i.first < j.first;
+	} else {
+		return i.second < j.second;
+	}
+}
 void Dictionary::rank_suggestions(vector<string>& suggestions, const string& word) const {
 	string p = word;
 	vector<std::pair<int, string>> rank_vector = {};
@@ -256,20 +262,31 @@ void Dictionary::rank_suggestions(vector<string>& suggestions, const string& wor
 				if((d[i][j-1] + 1) < smallest) {
 					smallest = d[i][j-1] + 1;
 				}
-				cost = d[i][j];
+
+
+				if(i == 25 && j == 25) {
+					int x = d[25][25];
+							std::cout << "cost: " << x << std::endl;
+				}
+
+				//cost = d[i][j];
 			}
 		}
+		//--------------det går inte att ta ut cost, den är alltid noll VARFÖR:!::!::GSFDLÖGKOÖGKSDF
+		cost = d[25][25];
+		std::cout << "cost: " << &cost << std::endl;
+		std::pair<int, string> pair = std::make_pair(cost, q);
+		std::cout << "rank vector, pushing word: " << q << ", cost: " << cost << std::endl;
+		rank_vector.push_back(pair);
 
-		std::cout << "rank vector, pushing word:" << q << std::endl;
-
-		rank_vector.push_back(std::make_pair(cost, q));
 	}
-	std::sort (rank_vector.begin(), rank_vector.end());
+	std::sort (rank_vector.begin(), rank_vector.end(), compare_pair);
 	suggestions.clear();
 
 	for(int i = 0; i < rank_vector.size(); ++i) {
 		suggestions.push_back(rank_vector[i].second);
 	}
+
 
 }
 

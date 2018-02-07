@@ -37,7 +37,7 @@ unsigned int Word::get_matches(const vector<string>& t) const {
 				++pointer_t;
 				++pointer_trigrams;
 				++count;
-				std::cout << "trigram count++, count: " << count << std::endl;
+				//std::cout << "trigram count++, count: " << count << std::endl;
 		} else {
 			++pointer_trigrams;
 		}
